@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 @app.route('/sensor/<string:sensor_type>/reading', methods=['POST'])
 def add_reading(sensor_type):
-    """creates reading object"""
+    """creates reading object and add to csv"""
     reading = request.get_json()
     print(reading)
     print(json_to_list(reading))
@@ -23,14 +23,16 @@ def add_reading(sensor_type):
     datetime_object = datetime.strptime(sensor_input[0], "%Y-%m-%d %H:%M:%S.%f")
     sensor_input[0] = datetime_object
 
-
     if sensor_type == "temperature":
         sensor = TemperatureReadingManager("data/temperature_results.csv")
         temp_read = TemperatureReading(*sensor_input)
         print(temp_read.get_timestamp())
         sensor.add_reading(temp_read)
     elif sensor_type == "pressure":
-        sensor = TemperatureReadingManager("data/pressure_results2.csv")
+        sensor = PressureReadingManager("data/pressure_results2.csv")
+        temp_read = PressureReading(*sensor_input)
+        print(temp_read.get_timestamp())
+        sensor.add_reading(temp_read)
 
     response = app.response_class(
         response=reading,
@@ -75,16 +77,6 @@ def get_all_readings(sensor_type):
     print(type(reading))
     pass
 
-
-# def check_sensor_type(sensor):
-#     """checks for sensor type and initializes corresponding sensor object"""
-#     if sensor == "temperature":
-#         TemperatureReadingManager("temp_results.csv")
-#
-#
-#     elif sensor == "pressure":
-#         PressureReadingManager("pressure_results.csv")
-#
 
 
 if __name__ == "__main__":
