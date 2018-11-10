@@ -5,6 +5,7 @@ from readings.abstract_reading import AbstractReading
 from readings.pressure_reading import PressureReading
 from readings.temperature_reading import TemperatureReading
 from flask import Flask, session, redirect, url_for, escape, request
+from datetime import datetime
 import json
 from collections import namedtuple
 
@@ -18,6 +19,11 @@ def add_reading(sensor_type):
     print(reading)
     print(json_to_list(reading))
     sensor_input = json_to_list(reading)
+
+    datetime_object = datetime.strptime(sensor_input[0], "%Y-%m-%d %H:%M:%S.%f")
+    sensor_input[0] = datetime_object
+
+
     if sensor_type == "temperature":
         sensor = TemperatureReadingManager("data/temperature_results.csv")
         temp_read = TemperatureReading(*sensor_input)
